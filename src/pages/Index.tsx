@@ -1,12 +1,38 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { PageType } from "@/lib/types";
+import { mockAlerts } from "@/lib/mock-data";
+import Sidebar from "@/components/Sidebar";
+import DashboardPage from "@/components/DashboardPage";
+import DevicesPage from "@/components/DevicesPage";
+import StatisticsPage from "@/components/StatisticsPage";
+import HistoryPage from "@/components/HistoryPage";
+import AlertsPage from "@/components/AlertsPage";
+import SettingsPage from "@/components/SettingsPage";
+
+const pages: Record<PageType, React.FC> = {
+  dashboard: DashboardPage,
+  devices: DevicesPage,
+  statistics: StatisticsPage,
+  history: HistoryPage,
+  alerts: AlertsPage,
+  settings: SettingsPage,
+};
 
 const Index = () => {
+  const [currentPage, setCurrentPage] = useState<PageType>("dashboard");
+  const unreadAlerts = mockAlerts.filter((a) => !a.read).length;
+  const PageComponent = pages[currentPage];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
-      </div>
+    <div className="flex min-h-screen gradient-mesh dark">
+      <Sidebar
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        alertCount={unreadAlerts}
+      />
+      <main className="flex-1 p-6 lg:p-8 overflow-auto">
+        <PageComponent />
+      </main>
     </div>
   );
 };
